@@ -45,10 +45,10 @@ jobs:
 
       - name: Convert TXT to MRS
         run: |
-          ./mihomo convert-ruleset domain text reject.txt reject.mrs
-          ./mihomo convert-ruleset domain text google.txt google.mrs
-          ./mihomo convert-ruleset domain text proxy.txt proxy.mrs
-          ./mihomo convert-ruleset domain text direct.txt direct.mrs
+          ./mihomo convert-ruleset domain yaml reject.txt reject.mrs
+          ./mihomo convert-ruleset domain yaml google.txt google.mrs
+          ./mihomo convert-ruleset domain yaml proxy.txt proxy.mrs
+          ./mihomo convert-ruleset domain yaml direct.txt direct.mrs
 
       - name: Update repository
         run: |
