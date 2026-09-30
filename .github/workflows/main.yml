@@ -1,0 +1,65 @@
+name: Convert Loyalsoldier rules to MRS
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Download Mihomo
+        run: |
+          curl -L \
+            https://github.com/MetaCubeX/mihomo/releases/download/v1.19.31/mihomo-linux-amd64-compatible-v1.19.31.gz \
+            -o mihomo.gz
+
+          gunzip mihomo.gz
+          chmod +x mihomo
+
+      - name: Download Loyalsoldier rules
+        run: |
+          curl -L \
+            https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/reject.txt \
+            -o reject.txt
+
+          curl -L \
+            https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/google.txt \
+            -o google.txt
+
+          curl -L \
+            https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/proxy.txt \
+            -o proxy.txt
+
+          curl -L \
+            https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt \
+            -o direct.txt
+
+      - name: Convert TXT to MRS
+        run: |
+          ./mihomo convert-ruleset domain text reject.txt reject.mrs
+          ./mihomo convert-ruleset domain text google.txt google.mrs
+          ./mihomo convert-ruleset domain text proxy.txt proxy.mrs
+          ./mihomo convert-ruleset domain text direct.txt direct.mrs
+
+      - name: Update repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add reject.mrs google.mrs proxy.mrs direct.mrs
+
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Update MRS rules"
+            git push
+          fi
