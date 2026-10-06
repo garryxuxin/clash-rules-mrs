@@ -3,7 +3,7 @@ name: Convert Loyalsoldier rules to MRS
 on:
   workflow_dispatch:
   schedule:
-    - cron: "10 2 * * *"
+    - cron: "10 16 * * *"
 
 permissions:
   contents: write
